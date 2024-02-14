@@ -35,7 +35,7 @@ final class Vehiculos: Model, Content {
     self.num_ruedas = num_ruedas
     self.tipo_combustible = tipo_combustible
     self.pantalla_central = pantalla_central
-    self.tamaño_pantalla = tamaño_pantalla
+    self.tamaño_pantalla = tamaño_pantalla //tamaño pantalla
 }
 
 
