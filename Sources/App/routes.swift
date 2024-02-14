@@ -1,5 +1,5 @@
-import Fluent
 import Vapor
+// No necesitas importar el módulo 'Controllers' si 'VehiculoController.swift' está en la misma carpeta
 
 func routes(_ app: Application) throws {
     app.get { req async throws in
@@ -10,5 +10,6 @@ func routes(_ app: Application) throws {
         "Hello, world!"
     }
 
-    try app.register(collection: TodoController())
+    // Ahora puedes registrar directamente VehiculoController sin importar Controllers
+    try app.register(collection: ControladorVehiculos())
 }
