@@ -9,6 +9,10 @@ struct ControladorVehiculos: RouteCollection {
         rutaVehiculos.post("postVehiculos", use: postVehiculos)
         rutaVehiculos.put("putVehiculo", use: putVehiculo)
         rutaVehiculos.delete("deleteVehiculo",":vehiculoID", use: deleteVehiculo)
+
+        //-------------------------------------------------------------------------
+        rutaVehiculos.get("getIDVehiculo", ":id", use: getIDVehiculo)
+        rutaVehiculos.get("getMarcaVehiculo" , ":marca", use: getMarcaVehiculo)
     }
     
 
@@ -54,5 +58,24 @@ struct ControladorVehiculos: RouteCollection {
 
         try await cocheModificar.save(on: req.db)
         return [cocheModificar]
+    }
+
+    //--------------------------------------------------------------------
+    func getIDVehiculo(req: Request) async throws -> Vehiculos {
+        guard let id = req.parameters.get("id", as: UUID.self),
+              let vehiculoID = try await Vehiculos.find(id, on: req.db) else {
+            throw Abort(.notFound, reason: "No se ha encontrado dicho ID")
+        }
+        return vehiculoID
+    }
+
+    //REVISAR
+    func getMarcaVehiculo(req: Request) async throws -> [Vehiculos] {
+        guard let marca = req.parameters.get("marca") else {
+            throw Abort(.badRequest, reason: "Se necesita especificar marca")
+        }
+
+        let vehiculosMarca = try await Vehiculos.query(on: req.db).filter(\.$marca == marca).all()
+        return vehiculosMarca
     }
 }
