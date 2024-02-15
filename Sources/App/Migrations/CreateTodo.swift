@@ -9,7 +9,7 @@ struct CreateVehicles: AsyncMigration {
             .field("num_ruedas", .int, .required)
             .field("tipo_combustible", .string, .required)
             .field("pantalla_central", .bool, .required)
-            .field("tamaño_pantalla", .string, .required)
+            .field("tamaño_pantalla", .int, .required)
             .create()
     }
 

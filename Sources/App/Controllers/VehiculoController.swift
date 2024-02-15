@@ -8,7 +8,7 @@ struct ControladorVehiculos: RouteCollection {
         rutaVehiculos.get("getVehiculos", use: getVehiculos)
         rutaVehiculos.post("postVehiculos", use: postVehiculos)
         rutaVehiculos.put("putVehiculo", use: putVehiculo)
-        rutaVehiculos.delete("deleteVehiculo", use: deleteVehiculo)
+        rutaVehiculos.delete("deleteVehiculo",":vehiculoID", use: deleteVehiculo)
     }
     
 
