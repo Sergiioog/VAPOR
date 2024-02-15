@@ -13,21 +13,39 @@ struct ControladorVehiculos: RouteCollection {
         //-------------------------------------------------------------------------
         rutaVehiculos.get("getIDVehiculo", ":id", use: getIDVehiculo)
         rutaVehiculos.get("getMarcaVehiculo" , ":marca", use: getMarcaVehiculo)
+        rutaVehiculos.get("getModeloVehiculo" , ":modelo", use: getModeloVehiculo)
+        rutaVehiculos.get("getNumeroRuedas" , ":num_ruedas", use: getNumeroRuedas)
+        rutaVehiculos.get("getTipoCombustible" , ":tipo_combustible", use: getTipoCombustible)
+        rutaVehiculos.get("getPantallaCentral" , ":pantalla_central", use: getPantallaCentral)
+        rutaVehiculos.get("getTamañoPantalla" , ":tamaño_pantalla", use: getTamañoPantalla)
+
+
+
     }
     
 
-    func getVehiculos(req: Request) async throws -> [Vehiculos] {
+    func getVehiculos(req: Request) async throws -> [Vehiculos] { //Obtienes todos los vehiculos de la db
         let coches = try await Vehiculos.query(on: req.db).all()
-        return coches
+        return coches/*.find(vehiculoID, on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { vehiculo in
+                let context: [String: Any] = [
+                    "marca": vehiculo.marca,
+                    "modelo": vehiculo.modelo,
+                    "num_ruedas" : vehiculo.num_ruedas,
+                    "tipo_combustible" : vehiculo.tipo_combustible,
+                    "pantalla_central" : vehiculo.pantalla_central,
+                    "tamaño_pantalla" : vehiculo.tamaño_pantalla
+                ]*/
     }
 
-    func postVehiculos(req: Request) async throws -> Vehiculos {
+    func postVehiculos(req: Request) async throws -> Vehiculos { //añade un nuevo vehículo
         let coche = try req.content.decode(Vehiculos.self)
         try await coche.save(on: req.db)
         return coche
     }
 
-    func deleteVehiculo(req: Request) async throws -> HTTPStatus {
+    func deleteVehiculo(req: Request) async throws -> HTTPStatus { //Elimina el vehiculo en concreto
         guard let vehiculoID = req.parameters.get("vehiculoID", as: UUID.self) else {
             throw Abort(.badRequest)
         }
@@ -40,7 +58,7 @@ struct ControladorVehiculos: RouteCollection {
         return .noContent
     }
 
-    func putVehiculo(req: Request) async throws -> [Vehiculos] {
+    func putVehiculo(req: Request) async throws -> [Vehiculos] { //Modifica un vehiculo en croncreto
         guard let vehiculoID = req.parameters.get("vehiculoID", as: UUID.self) else {
             throw Abort(.notFound)
         }
@@ -61,7 +79,7 @@ struct ControladorVehiculos: RouteCollection {
     }
 
     //--------------------------------------------------------------------
-    func getIDVehiculo(req: Request) async throws -> Vehiculos {
+    func getIDVehiculo(req: Request) async throws -> Vehiculos { //coge el id del vehiculo
         guard let id = req.parameters.get("id", as: UUID.self),
               let vehiculoID = try await Vehiculos.find(id, on: req.db) else {
             throw Abort(.notFound, reason: "No se ha encontrado dicho ID")
@@ -69,8 +87,7 @@ struct ControladorVehiculos: RouteCollection {
         return vehiculoID
     }
 
-    //REVISAR
-    func getMarcaVehiculo(req: Request) async throws -> [Vehiculos] {
+    func getMarcaVehiculo(req: Request) async throws -> [Vehiculos] { //Coger la marca del vehiculo
         guard let marca = req.parameters.get("marca") else {
             throw Abort(.badRequest, reason: "Se necesita especificar marca")
         }
@@ -78,4 +95,64 @@ struct ControladorVehiculos: RouteCollection {
         let vehiculosMarca = try await Vehiculos.query(on: req.db).filter(\.$marca == marca).all()
         return vehiculosMarca
     }
+
+    func getModeloVehiculo(req:Request) async throws -> [Vehiculos] { //Coge el modelo del coche
+        guard let modelo = req.parameters.get("modelo") else {
+            throw Abort(.badRequest, reason: "No existe dicho modelo")
+        }
+        let vehiculosModelo = try await Vehiculos.query(on:req.db).filter(\.$modelo == modelo).all()
+        return vehiculosModelo
+    }
+
+    //num_ruedas
+    func getNumeroRuedas (req:Request) async throws -> [Vehiculos] {
+        guard let num_ruedas = req.parameters.get("num_ruedas"), 
+
+            let intRuedas = Int(num_ruedas) else {
+                throw Abort(.badRequest, reason: "Tienes que meter el numero de ruedas como un entero")
+            }
+
+        
+        let vehiculosRuedas = try await Vehiculos.query(on:req.db).filter(\.$num_ruedas == intRuedas).all()
+        return vehiculosRuedas;
+    }
+
+    func getTipoCombustible (req:Request) async throws -> [Vehiculos] {
+        guard let tipo_combustible = req.parameters.get("tipo_combustible") else {
+            throw Abort(.notFound);
+        }
+        let vehiculoCombustible = try await Vehiculos.query(on:req.db).filter(\.$tipo_combustible == tipo_combustible).all()
+        return vehiculoCombustible;
+    }
+
+    func getPantallaCentral (req:Request) async throws -> [Vehiculos] {
+        guard let pantalla_central = req.parameters.get("pantalla_central"),
+
+            let pantallaBoolean = Bool(pantalla_central) else {
+                throw Abort(.notFound);
+            }
+            
+        let pantallaCoche = try await Vehiculos.query(on:req.db).filter(\.$pantalla_central == pantallaBoolean).all()
+        return pantallaCoche;
+    }
+
+    //REVISAR
+  func getTamañoPantalla (req:Request) async throws -> [Vehiculos] {
+        guard let tamaño_pantalla = req.parameters.get("tamaño_pantalla"), 
+
+            let intPantalla = Int(tamaño_pantalla) else {
+                throw Abort(.badRequest, reason: "Tienes que meter el numero de ruedas como un entero")
+            }
+
+        
+        let vehiculoPantalla = try await Vehiculos.query(on:req.db).filter(\.$tamaño_pantalla == intPantalla).all()
+        return vehiculoPantalla;
+    }
+   
+    //tamaño_pantalla
+
+
+
+
+
 }
