@@ -92,7 +92,9 @@ struct ControladorVehiculos: RouteCollection {
             throw Abort(.badRequest, reason: "Se necesita especificar marca")
         }
 
-        let vehiculosMarca = try await Vehiculos.query(on: req.db).filter(\.$marca == marca).all()
+        let vehiculosMarca = try await Vehiculos.query(on: req.db)
+                                                .filter(\.$marca == marca)
+                                                .all()
         return vehiculosMarca
     }
 
@@ -100,7 +102,9 @@ struct ControladorVehiculos: RouteCollection {
         guard let modelo = req.parameters.get("modelo") else {
             throw Abort(.badRequest, reason: "No existe dicho modelo")
         }
-        let vehiculosModelo = try await Vehiculos.query(on:req.db).filter(\.$modelo == modelo).all()
+        let vehiculosModelo = try await Vehiculos.query(on:req.db)
+                                                 .filter(\.$modelo == modelo)
+                                                 .all()
         return vehiculosModelo
     }
 
@@ -121,7 +125,9 @@ struct ControladorVehiculos: RouteCollection {
         guard let tipo_combustible = req.parameters.get("tipo_combustible") else {
             throw Abort(.notFound);
         }
-        let vehiculoCombustible = try await Vehiculos.query(on:req.db).filter(\.$tipo_combustible == tipo_combustible).all()
+        let vehiculoCombustible = try await Vehiculos.query(on:req.db)
+                                                      .filter(\.$tipo_combustible == tipo_combustible)
+                                                      .all()
         return vehiculoCombustible;
     }
 
@@ -132,7 +138,9 @@ struct ControladorVehiculos: RouteCollection {
                 throw Abort(.notFound);
             }
             
-        let pantallaCoche = try await Vehiculos.query(on:req.db).filter(\.$pantalla_central == pantallaBoolean).all()
+        let pantallaCoche = try await Vehiculos.query(on:req.db)
+                                                .filter(\.$pantalla_central == pantallaBoolean)
+                                                .all()
         return pantallaCoche;
     }
 
