@@ -7,7 +7,7 @@ struct ControladorVehiculos: RouteCollection {
 
         rutaVehiculos.get("getVehiculos", use: getVehiculos)
         rutaVehiculos.post("postVehiculos", use: postVehiculos)
-        rutaVehiculos.put("putVehiculo", use: putVehiculo)
+        rutaVehiculos.put("putVehiculo", ":vehiculoID", use: putVehiculo)
         rutaVehiculos.delete("deleteVehiculo",":vehiculoID", use: deleteVehiculo)
 
         //-------------------------------------------------------------------------
@@ -17,7 +17,7 @@ struct ControladorVehiculos: RouteCollection {
         rutaVehiculos.get("getNumeroRuedas" , ":num_ruedas", use: getNumeroRuedas)
         rutaVehiculos.get("getTipoCombustible" , ":tipo_combustible", use: getTipoCombustible)
         rutaVehiculos.get("getPantallaCentral" , ":pantalla_central", use: getPantallaCentral)
-        rutaVehiculos.get("getTamañoPantalla" , ":tamaño_pantalla", use: getTamañoPantalla)
+        rutaVehiculos.get("getTamanoPantalla" , ":tamaño_pantalla", use: getTamanoPantalla)
 
 
 
@@ -137,7 +137,7 @@ struct ControladorVehiculos: RouteCollection {
     }
 
     //REVISAR
-  func getTamañoPantalla (req:Request) async throws -> [Vehiculos] {
+  func getTamanoPantalla (req:Request) async throws -> [Vehiculos] {
         guard let tamaño_pantalla = req.parameters.get("tamaño_pantalla"), 
 
             let intPantalla = Int(tamaño_pantalla) else {
@@ -145,7 +145,10 @@ struct ControladorVehiculos: RouteCollection {
             }
 
         
-        let vehiculoPantalla = try await Vehiculos.query(on:req.db).filter(\.$tamaño_pantalla == intPantalla).all()
+        let vehiculoPantalla = try await Vehiculos.query(on:req.db)
+                                            .filter(\.$tamaño_pantalla == intPantalla)
+                                            .all()
+
         return vehiculoPantalla;
     }
    
