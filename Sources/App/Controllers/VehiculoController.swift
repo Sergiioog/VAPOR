@@ -19,24 +19,31 @@ struct ControladorVehiculos: RouteCollection {
         rutaVehiculos.get("getPantallaCentral" , ":pantalla_central", use: getPantallaCentral)
         rutaVehiculos.get("getTamanoPantalla" , ":tamaño_pantalla", use: getTamanoPantalla)
 
-
-
-    }
+        rutaVehiculos.get("getVehiculosPantalla", use: getVehiculosPantallaHandler)    }
     
+
+    func getVehiculosPantallaHandler(req: Request) throws -> EventLoopFuture<View> {
+    return Vehiculos.query(on: req.db).all().flatMap { coches in
+        let cochesContext = coches.map { coche in
+            return [
+                "marca": coche.marca,
+                "modelo": coche.modelo,
+                "num_ruedas": coche.num_ruedas
+                // Agrega más campos según sea necesario
+            ]
+        }
+        let context: [String: Encodable] = [
+            "title": "Lista de Vehículos",
+            "coches": cochesContext
+        ]
+        return req.view.render("index", context)
+    }
+}
+
 
     func getVehiculos(req: Request) async throws -> [Vehiculos] { //Obtienes todos los vehiculos de la db
         let coches = try await Vehiculos.query(on: req.db).all()
-        return coches/*.find(vehiculoID, on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .flatMap { vehiculo in
-                let context: [String: Any] = [
-                    "marca": vehiculo.marca,
-                    "modelo": vehiculo.modelo,
-                    "num_ruedas" : vehiculo.num_ruedas,
-                    "tipo_combustible" : vehiculo.tipo_combustible,
-                    "pantalla_central" : vehiculo.pantalla_central,
-                    "tamaño_pantalla" : vehiculo.tamaño_pantalla
-                ]*/
+        return coches
     }
 
     func postVehiculos(req: Request) async throws -> Vehiculos { //añade un nuevo vehículo
