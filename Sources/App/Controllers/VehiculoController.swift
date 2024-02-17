@@ -135,7 +135,7 @@ struct ControladorVehiculos: RouteCollection {
         return pantallaCoche;
     }
 
-  //Filtra por tamaño de pantalla
+  //Filtra por tamaño de pantall
   func getTamanoPantalla (req:Request) async throws -> [Vehiculos] {
         guard let tamaño_pantalla = req.parameters.get("tamaño_pantalla"), 
 
