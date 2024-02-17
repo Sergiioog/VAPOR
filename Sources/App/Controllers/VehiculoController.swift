@@ -19,25 +19,9 @@ struct ControladorVehiculos: RouteCollection {
         rutaVehiculos.get("getPantallaCentral" , ":pantalla_central", use: getPantallaCentral)
         rutaVehiculos.get("getTamanoPantalla" , ":tamaño_pantalla", use: getTamanoPantalla)
 
-        rutaVehiculos.get("getVehiculosPantalla", use: getVehiculosPantallaHandler)    }
     
 
-    func getVehiculosPantallaHandler(req: Request) throws -> EventLoopFuture<View> {
-    return Vehiculos.query(on: req.db).all().flatMap { coches in
-        let cochesContext = coches.map { coche in
-            return [
-                "marca": coche.marca,
-                "modelo": coche.modelo,
-                "num_ruedas": coche.num_ruedas
-                // Agrega más campos según sea necesario
-            ]
-        }
-        let context: [String: Encodable] = [
-            "title": "Lista de Vehículos",
-            "coches": cochesContext
-        ]
-        return req.view.render("index", context)
-    }
+    
 }
 
 
@@ -151,7 +135,7 @@ struct ControladorVehiculos: RouteCollection {
         return pantallaCoche;
     }
 
-    //REVISAR
+  //Filtra por tamaño de pantalla
   func getTamanoPantalla (req:Request) async throws -> [Vehiculos] {
         guard let tamaño_pantalla = req.parameters.get("tamaño_pantalla"), 
 
@@ -167,7 +151,7 @@ struct ControladorVehiculos: RouteCollection {
         return vehiculoPantalla;
     }
    
-    //tamaño_pantalla
+
 
 
 
